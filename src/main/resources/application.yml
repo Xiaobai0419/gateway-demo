@@ -14,12 +14,27 @@ spring:
         locator:
           enabled: true
       routes:
+      #配置权重路由--注意这里的路由配置信息一定不要与已配置的有重合，冲突！！比如已配置了路径/test/prefix/**路由到lb://SC-CONSUMER，这里即使配置路径路由到lb://SC-CONSUMER/v1也会失败，因为有重合，冲突
+      - id: service1_v1
+        uri: http://localhost:8888/v1
+        predicates:
+        - Path=/test-weight
+        - Weight=service1, 95
+
+      - id: service1_v2
+        uri: http://localhost:8888/v2
+        predicates:
+        - Path=/test-weight
+        - Weight=service1, 5
+
+
       - id: host_route
         uri: http://www.baidu.com
         predicates:
         - Path=/a/**
         filters:
         - StripPrefix=1
+      #DynamicRouteService类中"main"方法中配置的等价配置
 #      - id: header
 #        uri: http://localhost:8888/header
 #        filters:
