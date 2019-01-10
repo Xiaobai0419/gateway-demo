@@ -7,6 +7,8 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
+    #spring.cloud.gateway.discovery.locator.enabled：是否与服务发现组件进行结合，通过 serviceId 转发到具体的服务实例。
+    #默认为false，设为true便开启通过服务中心的自动根据 serviceId 创建路由的功能。
     gateway:
       discovery:
         locator:
@@ -34,3 +36,6 @@ redis:
     max-idle: 8
     min-idle: 0
   timeout: 0
+logging:
+  level:
+    org.springframework.cloud.gateway: debug
