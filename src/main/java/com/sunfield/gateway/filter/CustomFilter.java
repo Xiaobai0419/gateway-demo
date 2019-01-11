@@ -28,7 +28,7 @@ public class CustomFilter implements GatewayFilter, Ordered {
                     Long startTime = exchange.getAttribute(COUNT_Start_TIME);
                     Long endTime=(System.currentTimeMillis() - startTime);
                     if (startTime != null) {
-                        log.info(exchange.getRequest().getURI().getRawPath() + ": " + endTime + "ms");
+                        log.info(exchange.getRequest().getURI().getRawPath() + ": " + endTime + "ms~~~~~~~~~~~");
                     }
                 })
         );

@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RouteLocatorConfig {
 
+    //经测试，这里实现的路由-CustomFilter绑定，导致这个路由的所有路径都只走这个过滤器，不会走默认过滤器（配置为ElapsedGatewayFilterFactory），但会走全局过滤器
     @Bean
     public RouteLocator customerRouteLocator(RouteLocatorBuilder builder) {
         return builder.routes()

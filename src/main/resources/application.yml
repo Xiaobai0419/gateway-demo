@@ -13,6 +13,9 @@ spring:
       discovery:
         locator:
           enabled: true
+      #配置默认过滤器（工厂）
+      default-filters:
+      - Elapsed=true #为ElapsedGatewayFilterFactory实例（构造方法）传递Config的withParams参数值
       routes:
       #配置权重路由--注意这里的路由配置信息一定不要与已配置的有重合，冲突！！比如已配置了路径/test/prefix/**路由到lb://SC-CONSUMER，这里即使配置路径路由到lb://SC-CONSUMER/v1也会失败，因为有重合，冲突
       - id: service1_v1
