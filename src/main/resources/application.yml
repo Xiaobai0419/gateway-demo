@@ -4,9 +4,12 @@ spring:
   application:
     name: service-gateway
   cloud:
-    nacos:
-      discovery:
-        server-addr: 127.0.0.1:8848
+    consul:
+      host: 127.0.0.1
+      port: 8500
+#    nacos:
+#      discovery:
+#        server-addr: 127.0.0.1:8848
     #spring.cloud.gateway.discovery.locator.enabled：是否与服务发现组件进行结合，通过 serviceId 转发到具体的服务实例。
     #默认为false，设为true便开启通过服务中心的自动根据 serviceId 创建路由的功能。
     gateway:
@@ -17,26 +20,31 @@ spring:
       default-filters:
       - Elapsed=true #为ElapsedGatewayFilterFactory实例（构造方法）传递Config的withParams参数值
       routes:
-      #配置权重路由--注意这里的路由配置信息一定不要与已配置的有重合，冲突！！比如已配置了路径/test/prefix/**路由到lb://SC-CONSUMER，这里即使配置路径路由到lb://SC-CONSUMER/v1也会失败，因为有重合，冲突
-      - id: service1_v1
-        uri: http://localhost:8888/v1
+      #配置权重路由--注意这里配置了面向服务式的，Path必须使用/xxx/**式，且按照Path前缀个数配置filter去掉相应个数前缀，才能正确路由到相关服务中提供的各种资源路径，例子：http://localhost:9999/test-weight/v2?authToken=dsfdesf、http://localhost:9999/test-weight/header?authToken=dsfdesf等
+      #如果配置完整url式的，则不需要filter,Path直接配置/xxx即可路由到对应url
+      - id: service1_1
+        uri: lb://SC-CONSUMER #6成权重路由到该服务相关资源路径（需要该服务中相关资源路径存在）
         predicates:
-        - Path=/test-weight
-        - Weight=service1, 95
+        - Path=/test-weight/**
+        - Weight=service1, 60
+        filters:
+        - StripPrefix=1 #如果是面向服务的路由方式，必须配置filter将Path前缀去掉，有几个前缀就去掉几个，否则无法调用成功！！
 
-      - id: service1_v2
-        uri: http://localhost:8888/v2
+      - id: service1_2
+        uri: lb://SERVICE-ANO #4成权重路由到另一个服务相关资源路径（需要另一个服务中与上面访问路径（比如http://localhost:9999/test-weight/header?authToken=dsfdesf）相同的资源路径也存在）
         predicates:
-        - Path=/test-weight
-        - Weight=service1, 5
+        - Path=/test-weight/**
+        - Weight=service1, 40
+        filters:
+        - StripPrefix=1 #如果是面向服务的路由方式，必须配置filter将Path前缀去掉，有几个前缀就去掉几个，否则无法调用成功！！
 
 
       - id: host_route
-        uri: http://www.baidu.com
+        uri: lb://SC-CONSUMER
         predicates:
         - Path=/a/**
         filters:
-        - StripPrefix=1
+        - StripPrefix=1 #如果是面向服务的路由方式，必须配置filter将Path前缀去掉，有几个前缀就去掉几个，否则无法调用成功！！
       #DynamicRouteService类中"main"方法中配置的等价配置
 #      - id: header
 #        uri: http://localhost:8888/header

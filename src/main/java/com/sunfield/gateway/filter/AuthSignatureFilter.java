@@ -9,7 +9,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * 调用鉴权
+ * 调用鉴权--过滤器是针对网关路由路径来的，网关自己定义的Controller并不经过过滤器，因此也不需要加鉴权相关参数！！
  */
 @Component
 public class AuthSignatureFilter implements GlobalFilter, Ordered {
